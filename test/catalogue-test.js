@@ -64,3 +64,42 @@ describe("checkReorder", () => {
     expect(result.productIds).to.be.empty;
   });
 });
+
+describe("batchAddProducts", () => {
+  beforeEach(function () {
+    cat = new Catalogue("Test batch");
+    batch = {
+       type: 'Batch',
+      products: [
+        new Product("A126", "Product 6", 100, 10, 10.0, 10),
+        new Product("A127", "Product 7", 100, 10, 10.0, 10),
+      ],
+    };
+  });
+  it("should add products for a normal request and return the correct no. added", () => {
+    const result = cat.batchAddProducts(batch);
+    expect(result).to.equal(2);
+    let addedProduct = cat.findProductById("A126");
+    expect(addedProduct).to.not.be.undefined;
+    addedProduct = cat.findProductById("A126");
+    expect(addedProduct).to.not.be.undefined;
+  });
+  it("should only add products with a non-zero quantity in stock", () => {
+    batch.products.push(new Product("A128", "Product 8", 0, 10, 10.0, 10));
+    // console.log(cat.products)
+    // console.log(batch.products)
+    const result = cat.batchAddProducts(batch);
+
+    expect(result).to.equal(2);
+    const rejectedProduct = cat.findProductById("A128");
+    expect(rejectedProduct).to.be.undefined;
+  });
+  it("should throw an exception when batch includes an existing product id", () => {
+    cat.batchAddProducts(batch)
+    batch.products.push(new Product("A123", "Product 8", 0, 10, 10.0, 10));
+    expect(() => cat.batchAddProducts(batch)).to.throw("Bad Batch");
+    // Target state
+    let rejectedProduct = cat.findProductById("A123");
+    expect(rejectedProduct).to.be.undefined; 
+  });
+});
