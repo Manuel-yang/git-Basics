@@ -6,6 +6,10 @@ class Product {
          this.quantityInStock = initialQuantity
         this.reorderLevel = reorderLevel
     }
+    
+    methodX() {
+      // do something
+  }
 }
 
 
